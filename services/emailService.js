@@ -14,8 +14,8 @@ export const sendContactEmail = async ({ email, message }) => {
     `,
   });
 
-  // Auto-reply to sender
-  await resend.emails.send({
+  // Auto-reply to sender (non-blocking — won't break if Resend rejects the recipient)
+  resend.emails.send({
     from: emailConfig.EMAIL_FROM,
     to: email,
     subject: "Message Received 📩",
@@ -27,5 +27,5 @@ export const sendContactEmail = async ({ email, message }) => {
       <p><strong>Your message:</strong></p>
       <p>${message}</p>
     `,
-  });
+  }).catch(() => {});
 };
