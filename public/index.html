@@ -1,0 +1,1674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ajayi Basit — Fullstack Developer</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=JetBrains+Mono:wght@300;400;500;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+/* #060608 */
+:root {
+  --bg: #8181d6;
+  --bg-elevated: #0c0c10;
+  --bg-card: #040405;
+  --bg-card-hover: #16161d;
+  --text: #e8e6e3;
+  --text-muted: #b4b4b4;
+  --text-dim: #c7c7c7;
+  --accent: #d0ff1f;
+  --accent-dim: rgba(208, 255, 31, 0.08);
+  --accent-glow: rgba(208, 255, 31, 0.15);
+  --accent-mid: rgba(208, 255, 31, 0.35);
+  --warm: #ff6b3d;
+  --cool: #00e5a0;
+  --violet: #a78bfa;
+  --serif: 'Playfair Display', Georgia, serif;
+  --mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --sans: 'DM Sans', system-ui, sans-serif;
+  --border: rgba(255, 255, 255, 0.06);
+  --border-hover: rgba(255, 255, 255, 0.12);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --transition: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+/* ─── GRAIN OVERLAY ─── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+
+/* ─── LOADER ─── */
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  animation: loaderOut 0.8s ease 2.5s forwards;
+}
+.loader-bar {
+  width: 180px;
+  height: 2px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.loader-bar::after {
+  content: '';
+  display: block;
+  width: 0%;
+  height: 100%;
+  background: var(--accent);
+  animation: loadFill 2s ease forwards;
+}
+.loader-text {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+}
+@keyframes loadFill { to { width: 100%; } }
+@keyframes loaderOut { to { opacity: 0; pointer-events: none; visibility: hidden; } }
+
+/* ─── NAV ─── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 1.2rem 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  background: rgba(6, 6, 8, 0.7);
+  border-bottom: 1px solid var(--border);
+  transition: all 0.4s var(--transition);
+}
+nav.scrolled {
+  padding: 0.8rem 3rem;
+  background: rgba(6, 6, 8, 0.92);
+}
+.nav-logo {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--text);
+  text-decoration: none;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.nav-logo span { color: var(--accent); }
+.nav-links { display: flex; gap: 2rem; align-items: center; }
+.nav-links a {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  position: relative;
+  padding: 0.4rem 0;
+  transition: color 0.3s var(--transition);
+  cursor: pointer;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent);
+  transition: width 0.5s var(--transition);
+}
+.nav-links a:hover { color: var(--accent); }
+.nav-links a:hover::after { width: 100%; }
+.nav-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  color: var(--cool);
+  letter-spacing: 0.08em;
+}
+.nav-status .pulse-dot {
+  width: 6px; height: 6px;
+  background: var(--cool);
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+  box-shadow: 0 0 6px var(--cool);
+}
+
+/* MOBILE NAV */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+.nav-toggle span {
+  width: 22px;
+  height: 1.5px;
+  background: var(--text);
+  transition: all 0.3s var(--transition);
+  display: block;
+}
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  position: relative;
+  overflow: hidden;
+}
+.hero-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 8rem 4rem 4rem 4.5rem;
+  position: relative;
+  z-index: 2;
+}
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  opacity: 0;
+  animation: fadeUp 0.7s ease 2.8s forwards;
+}
+.hero-eyebrow::before {
+  content: '';
+  width: 32px;
+  height: 1px;
+  background: var(--accent);
+}
+.hero-name {
+  font-family: var(--serif);
+  font-size: clamp(3.2rem, 6.5vw, 6.5rem);
+  font-weight: 900;
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  margin-bottom: 2rem;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 3s forwards;
+}
+.hero-name .line { display: block; }
+.hero-name .outline {
+  -webkit-text-stroke: 1.5px var(--text);
+  color: transparent;
+}
+.hero-name .accent-text { color: var(--accent); }
+.hero-name .italic-serif {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.hero-desc {
+  font-size: 1.05rem;
+  font-weight: 300;
+  color: var(--text-muted);
+  line-height: 1.8;
+  max-width: 460px;
+  margin-bottom: 3rem;
+  opacity: 0;
+  animation: fadeUp 0.7s ease 3.2s forwards;
+}
+.hero-desc strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  opacity: 0;
+  animation: fadeUp 0.7s ease 3.4s forwards;
+}
+
+/* Buttons */
+.btn {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.95rem 2rem;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  border-radius: var(--radius-sm);
+  transition: all 0.4s var(--transition);
+}
+.btn-primary {
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 600;
+}
+.btn-primary:hover {
+  box-shadow: 0 0 50px var(--accent-glow), 0 6px 30px rgba(0,0,0,0.4);
+  transform: translateY(-2px);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+.btn svg { transition: transform 0.3s var(--transition); }
+.btn:hover svg { transform: translateX(3px); }
+
+/* Hero Right */
+.hero-right {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Grid background */
+.grid-bg {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: gridDrift 25s linear infinite;
+  mask-image: radial-gradient(ellipse 70% 60% at center, black, transparent);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at center, black, transparent);
+}
+@keyframes gridDrift { to { background-position: 50px 50px; } }
+
+/* Ambient glow */
+.hero-glow {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent-dim) 0%, transparent 65%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: glowPulse 6s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.1); }
+}
+
+.hero-visual {
+  width: 400px;
+  height: 480px;
+  position: relative;
+  opacity: 0;
+  animation: fadeUp 1s ease 3.2s forwards;
+}
+
+.code-window {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  position: absolute;
+  width: 340px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.03);
+  transition: transform 0.6s var(--transition), box-shadow 0.6s var(--transition);
+}
+.code-window:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 40px var(--accent-dim);
+}
+.code-window-1 { top: 0; left: 0; z-index: 2; }
+.code-window-2 { top: 140px; left: 70px; z-index: 3; }
+
+.code-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+}
+.code-dot { width: 9px; height: 9px; border-radius: 50%; }
+.code-dot:nth-child(1) { background: #ff5f57; }
+.code-dot:nth-child(2) { background: #febc2e; }
+.code-dot:nth-child(3) { background: #28c840; }
+.code-titlebar .filename {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  margin-left: auto;
+}
+
+.code-body {
+  padding: 14px 16px;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  line-height: 1.9;
+  color: var(--text-muted);
+}
+.code-body .kw { color: var(--warm); }
+.code-body .fn { color: var(--cool); }
+.code-body .str { color: var(--accent); }
+.code-body .cmt { color: var(--text-dim); font-style: italic; }
+.code-body .num { color: var(--violet); }
+.code-body .ln {
+  color: var(--text-dim);
+  user-select: none;
+  display: inline-block;
+  width: 2ch;
+  text-align: right;
+  margin-right: 1.2em;
+  opacity: 0.4;
+}
+
+/* Floating badges */
+.float-badge {
+  position: absolute;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 5;
+  animation: floatBadge 4s ease-in-out infinite;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  color: var(--text-muted);
+  backdrop-filter: blur(10px);
+}
+.float-badge:nth-child(4) { bottom: 50px; left: -15px; animation-delay: 0s; }
+.float-badge:nth-child(5) { bottom: 120px; right: -25px; animation-delay: 1.5s; }
+.float-badge .indicator {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+}
+.float-badge .indicator.green { background: var(--cool); box-shadow: 0 0 8px var(--cool); }
+.float-badge .indicator.warm { background: var(--warm); box-shadow: 0 0 8px var(--warm); }
+
+@keyframes floatBadge {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(0.5deg); }
+}
+
+/* ─── SECTION GLOBALS ─── */
+section { padding: 7rem 4.5rem; position: relative; }
+.section-eyebrow {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.section-eyebrow::before {
+  content: '';
+  width: 36px;
+  height: 1px;
+  background: var(--accent);
+}
+.section-heading {
+  font-family: var(--serif);
+  font-size: clamp(2.4rem, 4vw, 3.8rem);
+  font-weight: 700;
+  line-height: 1.08;
+  margin-bottom: 3rem;
+  letter-spacing: -0.02em;
+}
+.section-heading em {
+  font-style: italic;
+  color: var(--accent);
+}
+.divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ─── ABOUT ─── */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 5rem;
+  align-items: start;
+}
+.about-text p {
+  font-weight: 300;
+  font-size: 1rem;
+  line-height: 1.9;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+.about-text p strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.metric-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.8rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s var(--transition);
+  cursor: default;
+}
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent-dim), transparent);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.metric-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-3px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+  background: var(--bg-card-hover);
+}
+.metric-card:hover::before { opacity: 1; }
+.metric-value {
+  font-family: var(--serif);
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 0.4rem;
+}
+.metric-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* ─── TECH STACK ─── */
+.stack-section {
+  background: var(--bg-elevated);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.stack-marquee {
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 2.5rem -4.5rem;
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.stack-track {
+  display: inline-flex;
+  gap: 2.5rem;
+  animation: marquee 30s linear infinite;
+}
+.stack-chip {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+  transition: color 0.3s;
+  cursor: default;
+}
+.stack-chip:hover { color: var(--accent); }
+.stack-chip .dot {
+  width: 5px; height: 5px;
+  background: var(--accent);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+.stack-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-top: 3rem;
+}
+.stack-col h4 {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1rem;
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid var(--border);
+}
+.stack-col ul { list-style: none; }
+.stack-col li {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  padding: 0.55rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.025);
+  transition: all 0.3s var(--transition);
+  cursor: default;
+}
+.stack-col li:hover {
+  color: var(--text);
+  padding-left: 0.6rem;
+}
+
+/* ─── PROJECTS ─── */
+.projects-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+.project-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  position: relative;
+  transition: all 0.5s var(--transition);
+  cursor: pointer;
+}
+.project-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-5px);
+  box-shadow: 0 35px 70px rgba(0,0,0,0.35);
+}
+.project-card.featured {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+}
+
+.project-preview {
+  height: 220px;
+  background: var(--bg-elevated);
+  position: relative;
+  overflow: hidden;
+}
+.project-card.featured .project-preview { height: 100%; min-height: 340px; }
+.project-preview-inner {
+  position: absolute;
+  inset: 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview-app {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.preview-topbar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 11px;
+  background: rgba(0,0,0,0.5);
+  border-bottom: 1px solid var(--border);
+}
+.preview-topbar .mini-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+}
+.preview-topbar .mini-dot:nth-child(1) { background: #ff5f57; }
+.preview-topbar .mini-dot:nth-child(2) { background: #febc2e; }
+.preview-topbar .mini-dot:nth-child(3) { background: #28c840; }
+.preview-topbar .url-bar {
+  flex: 1;
+  background: rgba(255,255,255,0.04);
+  border-radius: 3px;
+  padding: 2px 8px;
+  font-family: var(--mono);
+  font-size: 0.5rem;
+  color: var(--text-dim);
+  margin-left: 5px;
+}
+.preview-content {
+  flex: 1;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+/* Event platform preview */
+.preview-event { background: linear-gradient(145deg, #120825, #0a1929); }
+.ev-header { display: flex; justify-content: space-between; align-items: center; }
+.ev-title { font-family: var(--sans); font-size: 0.65rem; font-weight: 600; color: var(--text); }
+.ev-badge {
+  font-family: var(--mono); font-size: 0.45rem; padding: 2px 7px;
+  background: var(--cool); color: var(--bg); border-radius: 3px; font-weight: 600;
+}
+.ev-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; flex: 1; margin-top: 6px; }
+.ev-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 5px;
+  padding: 8px;
+}
+.ev-card-title { font-size: 0.5rem; font-weight: 600; color: var(--text-dim); margin-bottom: 3px; }
+.ev-card-stat { font-family: var(--serif); font-size: 1rem; font-weight: 700; color: var(--accent); }
+
+/* Guessing game preview */
+.preview-game { background: linear-gradient(145deg, #081a0d, #0a1a1b); }
+.game-prompt { font-family: var(--serif); font-size: 0.85rem; color: var(--text); text-align: center; margin-top: 10px; }
+.game-input-row { display: flex; gap: 5px; justify-content: center; margin-top: 8px; }
+.game-box {
+  width: 30px; height: 34px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--cool);
+  border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 0.85rem; color: var(--cool);
+}
+.game-hint { font-family: var(--mono); font-size: 0.5rem; color: var(--text-dim); text-align: center; margin-top: 5px; }
+
+/* Expense tracker preview */
+.preview-expense { background: linear-gradient(145deg, #1a1200, #0d1b0d); }
+.exp-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+.exp-cat { font-size: 0.55rem; color: var(--text-dim); }
+.exp-amt { font-family: var(--mono); font-size: 0.6rem; color: var(--accent); }
+.exp-bar { height: 3px; border-radius: 2px; background: var(--accent-dim); margin-top: 2px; }
+.exp-bar-fill { height: 100%; border-radius: 2px; background: var(--accent); }
+
+.project-info { padding: 1.8rem; }
+.project-number {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  color: var(--text-dim);
+  margin-bottom: 0.7rem;
+  letter-spacing: 0.05em;
+}
+.project-title {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.7rem;
+  letter-spacing: -0.01em;
+}
+.project-desc {
+  font-size: 0.88rem;
+  font-weight: 300;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: 1.3rem;
+}
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1.3rem;
+}
+.tag {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-dim);
+  transition: all 0.3s;
+  cursor: default;
+}
+.tag:hover {
+  border-color: var(--accent-mid);
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+.project-link {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--accent);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: gap 0.3s var(--transition);
+  cursor: pointer;
+}
+.project-link:hover { gap: 0.9rem; }
+
+/* ─── CONTACT ─── */
+.contact-section {
+  text-align: center;
+  padding: 10rem 4.5rem;
+  position: relative;
+}
+.contact-section::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, var(--accent-dim) 0%, transparent 65%);
+  pointer-events: none;
+}
+.contact-heading {
+  font-family: var(--serif);
+  font-size: clamp(3rem, 5.5vw, 5.5rem);
+  font-weight: 900;
+  line-height: 1.02;
+  margin-bottom: 1.5rem;
+  position: relative;
+  letter-spacing: -0.03em;
+}
+.contact-heading em {
+  font-style: italic;
+  color: var(--accent);
+}
+.contact-sub {
+  font-weight: 300;
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  max-width: 480px;
+  margin: 0 auto 3rem;
+  line-height: 1.75;
+}
+.contact-links {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 4rem;
+}
+.contact-link {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  padding: 0.9rem 1.8rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: all 0.4s var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+}
+.contact-link:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+.contact-link svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+}
+
+/* ─── CONTACT FORM ─── */
+.contact-form-wrapper {
+  position: relative;
+  max-width: 520px;
+  margin: 0 auto;
+  text-align: left;
+}
+.contact-form-label {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.contact-form-label span { color: var(--accent); }
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color 0.4s var(--transition), box-shadow 0.4s var(--transition);
+}
+.contact-form:focus-within {
+  border-color: var(--border-hover);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 0 1px rgba(208, 255, 31, 0.06);
+}
+
+.form-field {
+  position: relative;
+  border-bottom: 1px solid var(--border);
+}
+.form-field:last-of-type { border-bottom: none; }
+
+.form-field input,
+.form-field textarea {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  font-weight: 300;
+  padding: 1.2rem 1.5rem 1.2rem 1.5rem;
+  transition: background 0.3s;
+}
+.form-field textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.7;
+}
+.form-field input::placeholder,
+.form-field textarea::placeholder {
+  color: var(--text-dim);
+  font-weight: 300;
+}
+.form-field input:focus,
+.form-field textarea:focus {
+  background: rgba(255,255,255,0.015);
+}
+
+/* Focus indicator line */
+.form-field::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent);
+  transition: width 0.5s var(--transition);
+}
+.form-field:focus-within::after { width: 100%; }
+
+.form-submit {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  background: rgba(255,255,255,0.01);
+  border-top: 1px solid var(--border);
+}
+.form-hint {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  color: var(--text-dim);
+  letter-spacing: 0.05em;
+}
+.form-send-btn {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.7rem 1.6rem;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s var(--transition);
+}
+.form-send-btn:hover {
+  box-shadow: 0 0 30px var(--accent-glow);
+  transform: translateY(-1px);
+}
+.form-send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+.form-send-btn svg {
+  width: 13px;
+  height: 13px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2.5;
+  transition: transform 0.3s var(--transition);
+}
+.form-send-btn:hover svg { transform: translateX(2px) translateY(-2px); }
+
+/* Success / Error states */
+.form-status {
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  display: none;
+}
+.form-status.show { display: block; }
+.form-status.success .status-icon { color: var(--cool); }
+.form-status.error .status-icon { color: var(--warm); }
+.status-icon {
+  font-size: 1.8rem;
+  margin-bottom: 0.8rem;
+  display: block;
+}
+.status-text {
+  font-size: 0.92rem;
+  color: var(--text);
+  margin-bottom: 0.4rem;
+  font-weight: 500;
+}
+.status-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 300;
+}
+.status-retry {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--accent);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: all 0.3s;
+  letter-spacing: 0.08em;
+}
+.status-retry:hover {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+/* ─── FOOTER ─── */
+footer {
+  padding: 2.5rem 4.5rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+footer p {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--text-dim);
+  letter-spacing: 0.04em;
+}
+.footer-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.footer-status .pulse-live {
+  width: 7px; height: 7px;
+  background: var(--cool);
+  border-radius: 50%;
+  animation: pulse 2s ease infinite;
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 229, 160, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(0, 229, 160, 0); }
+}
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(35px);
+  transition: all 0.7s var(--transition);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger children */
+.reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s var(--transition);
+}
+.reveal-stagger.visible > *:nth-child(1) { transition-delay: 0s; opacity: 1; transform: translateY(0); }
+.reveal-stagger.visible > *:nth-child(2) { transition-delay: 0.08s; opacity: 1; transform: translateY(0); }
+.reveal-stagger.visible > *:nth-child(3) { transition-delay: 0.16s; opacity: 1; transform: translateY(0); }
+.reveal-stagger.visible > *:nth-child(4) { transition-delay: 0.24s; opacity: 1; transform: translateY(0); }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 1024px) {
+  section { padding: 5rem 3rem; }
+  .hero { grid-template-columns: 1fr; }
+  .hero-right { display: none; }
+  .hero-left { padding: 8rem 3rem 5rem; }
+  nav { padding: 1rem 2rem; }
+  .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+  .projects-grid { grid-template-columns: 1fr; }
+  .project-card.featured { grid-template-columns: 1fr; }
+  .stack-grid { grid-template-columns: 1fr 1fr; }
+  .stack-marquee { margin: 2.5rem -3rem; }
+  footer { padding: 2rem 3rem; }
+  .contact-section { padding: 7rem 3rem; }
+}
+
+@media (max-width: 680px) {
+  section { padding: 4rem 1.5rem; }
+  .hero-left { padding: 7rem 1.5rem 4rem; }
+  nav { padding: 0.8rem 1.2rem; }
+  .nav-links { 
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(6, 6, 8, 0.97);
+    backdrop-filter: blur(20px);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    z-index: 999;
+  }
+  .nav-links.open { display: flex; }
+  .nav-links a { font-size: 1rem; letter-spacing: 0.2em; }
+  .nav-toggle { display: flex; z-index: 1001; }
+  .nav-status { display: none; }
+  .hero-name { font-size: clamp(2.6rem, 10vw, 4rem); }
+  .hero-actions { flex-direction: column; }
+  .hero-actions .btn { width: 100%; justify-content: center; }
+  .metrics-grid { grid-template-columns: 1fr 1fr; }
+  .stack-grid { grid-template-columns: 1fr; }
+  .stack-marquee { margin: 2rem -1.5rem; }
+  .contact-links { flex-direction: column; align-items: center; }
+  .contact-link { width: 100%; justify-content: center; }
+  .contact-form-wrapper { margin-top: 0; }
+  footer { flex-direction: column; gap: 1rem; text-align: center; padding: 2rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div class="loader">
+  <div class="loader-text">initializing jb_</div>
+  <div class="loader-bar"></div>
+</div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="/" class="nav-logo">Hajay<span>B</span></a>
+  <div class="nav-links" id="navLinks">
+    <a href="#about" onclick="closeNav()">About</a>
+    <a href="#stack" onclick="closeNav()">Stack</a>
+    <a href="#work" onclick="closeNav()">Work</a>
+    <a href="#contact" onclick="closeNav()">Contact</a>
+  </div>
+  <div class="nav-status">
+    <div class="pulse-dot"></div>
+    Available for work
+  </div>
+  <button class="nav-toggle" id="navToggle" onclick="toggleNav()" aria-label="Toggle navigation">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">Fullstack Developer &mdash; Lagos, NG</div>
+    <h1 class="hero-name">
+      <span class="line outline">Building</span>
+      <span class="line">the <span class="accent-text">web,</span></span>
+      <span class="line outline">one deploy</span>
+      <span class="line">at a <span class="italic-serif">time.</span></span>
+    </h1>
+    <p class="hero-desc">
+      I design and build <strong>fullstack applications</strong> from database to deploy &mdash; crafting clean interfaces backed by solid architecture and real infrastructure.
+    </p>
+    <div class="hero-actions">
+      <a href="#work" class="btn btn-primary">
+        View Projects
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#contact" class="btn btn-ghost">Get in Touch</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="grid-bg"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-visual">
+      <div class="code-window code-window-1">
+        <div class="code-titlebar">
+          <div class="code-dot"></div>
+          <div class="code-dot"></div>
+          <div class="code-dot"></div>
+          <span class="filename">server.ts</span>
+        </div>
+        <div class="code-body">
+          <span class="ln">1</span><span class="kw">import</span> express <span class="kw">from</span> <span class="str">'express'</span>;<br>
+          <span class="ln">2</span><span class="kw">import</span> mongoose <span class="kw">from</span> <span class="str">'mongoose'</span>;<br>
+          <span class="ln">3</span><br>
+          <span class="ln">4</span><span class="kw">const</span> app = <span class="fn">express</span>();<br>
+          <span class="ln">5</span><span class="cmt">// let's build something</span><br>
+          <span class="ln">6</span>app.<span class="fn">listen</span>(<span class="num">3000</span>);
+        </div>
+      </div>
+      <div class="code-window code-window-2">
+        <div class="code-titlebar">
+          <div class="code-dot"></div>
+          <div class="code-dot"></div>
+          <div class="code-dot"></div>
+          <span class="filename">App.tsx</span>
+        </div>
+        <div class="code-body">
+          <span class="ln">1</span><span class="kw">export default function</span> <span class="fn">App</span>() {<br>
+          <span class="ln">2</span>&nbsp;&nbsp;<span class="kw">return</span> (<br>
+          <span class="ln">3</span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="fn">Layout</span>&gt;<br>
+          <span class="ln">4</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="fn">Hero</span> /&gt;<br>
+          <span class="ln">5</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span class="fn">Projects</span> /&gt;<br>
+          <span class="ln">6</span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span class="fn">Layout</span>&gt;<br>
+          <span class="ln">7</span>&nbsp;&nbsp;);<br>
+          <span class="ln">8</span>}
+        </div>
+      </div>
+      <div class="float-badge">
+        <div class="indicator green"></div>
+        PM2 &mdash; all online
+      </div>
+      <div class="float-badge">
+        <div class="indicator warm"></div>
+        SSL &mdash; grade A+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<div class="divider"></div>
+<section id="about">
+  <div class="section-eyebrow reveal">About</div>
+  <h2 class="section-heading reveal">Obsessed with<br>the <em>full</em> picture.</h2>
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <p>
+        I'm a <strong>fullstack developer</strong> who thrives in the space between frontend polish and backend reliability. My work spans the entire stack &mdash; from crafting responsive React interfaces with TypeScript to architecting Express APIs, managing MongoDB databases, and deploying everything on my own VPS.
+      </p>
+      <p>
+        I don't just write code and hand it off. I <strong>deploy it</strong>, configure Nginx reverse proxies, manage SSL certificates, and keep everything running with PM2. Every project I build goes live on real infrastructure.
+      </p>
+      <p>
+        Currently focused on building production-ready web applications and growing my freelance practice. I believe the best work comes from understanding every layer of the stack.
+      </p>
+    </div>
+    <div class="metrics-grid reveal-stagger reveal">
+      <div class="metric-card">
+        <div class="metric-value">5+</div>
+        <div class="metric-label">Live Projects</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">&infin;</div>
+        <div class="metric-label">Curiosity</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">24/7</div>
+        <div class="metric-label">VPS Uptime</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">A+</div>
+        <div class="metric-label">SSL Grade</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STACK -->
+<section id="stack" class="stack-section">
+  <div class="section-eyebrow reveal">Tech Stack</div>
+  <h2 class="section-heading reveal">Tools of<br>the <em>trade.</em></h2>
+
+  <div class="stack-marquee">
+    <div class="stack-track">
+      <span class="stack-chip"><span class="dot"></span>React</span>
+      <span class="stack-chip"><span class="dot"></span>TypeScript</span>
+      <span class="stack-chip"><span class="dot"></span>Node.js</span>
+      <span class="stack-chip"><span class="dot"></span>Express</span>
+      <span class="stack-chip"><span class="dot"></span>MongoDB</span>
+      <span class="stack-chip"><span class="dot"></span>Nginx</span>
+      <span class="stack-chip"><span class="dot"></span>PM2</span>
+      <span class="stack-chip"><span class="dot"></span>Cloudflare</span>
+      <span class="stack-chip"><span class="dot"></span>Ubuntu</span>
+      <span class="stack-chip"><span class="dot"></span>Git</span>
+      <span class="stack-chip"><span class="dot"></span>Socket.io</span>
+      <span class="stack-chip"><span class="dot"></span>Tailwind CSS</span>
+      <!-- duplicate for seamless loop -->
+      <span class="stack-chip"><span class="dot"></span>React</span>
+      <span class="stack-chip"><span class="dot"></span>TypeScript</span>
+      <span class="stack-chip"><span class="dot"></span>Node.js</span>
+      <span class="stack-chip"><span class="dot"></span>Express</span>
+      <span class="stack-chip"><span class="dot"></span>MongoDB</span>
+      <span class="stack-chip"><span class="dot"></span>Nginx</span>
+      <span class="stack-chip"><span class="dot"></span>PM2</span>
+      <span class="stack-chip"><span class="dot"></span>Cloudflare</span>
+      <span class="stack-chip"><span class="dot"></span>Ubuntu</span>
+      <span class="stack-chip"><span class="dot"></span>Git</span>
+      <span class="stack-chip"><span class="dot"></span>Socket.io</span>
+      <span class="stack-chip"><span class="dot"></span>Tailwind CSS</span>
+    </div>
+  </div>
+
+  <div class="stack-grid reveal">
+    <div class="stack-col">
+      <h4>Frontend</h4>
+      <ul>
+        <li>React</li>
+        <li>TypeScript</li>
+        <li>Tailwind CSS</li>
+        <li>HTML / CSS / JS</li>
+      </ul>
+    </div>
+    <div class="stack-col">
+      <h4>Backend</h4>
+      <ul>
+        <li>Node.js</li>
+        <li>Express</li>
+        <li>MongoDB / Mongoose</li>
+        <li>Socket.io</li>
+      </ul>
+    </div>
+    <div class="stack-col">
+      <h4>DevOps</h4>
+      <ul>
+        <li>Ubuntu VPS</li>
+        <li>Nginx</li>
+        <li>PM2</li>
+        <li>Cloudflare / Let's Encrypt</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<div class="divider"></div>
+<section id="work">
+  <div class="section-eyebrow reveal">Selected Work</div>
+  <h2 class="section-heading reveal">Projects that<br>went <em>live.</em></h2>
+
+  <div class="projects-grid">
+    <!-- Featured project -->
+    <div class="project-card featured reveal">
+      <div class="project-preview">
+        <div class="project-preview-inner">
+          <div class="preview-app preview-event">
+            <div class="preview-topbar">
+              <div class="mini-dot"></div><div class="mini-dot"></div><div class="mini-dot"></div>
+              <div class="url-bar">eventify.codejs.live</div>
+            </div>
+            <div class="preview-content">
+              <div class="ev-header">
+                <div class="ev-title">Event Dashboard</div>
+                <div class="ev-badge">LIVE</div>
+              </div>
+              <div class="ev-cards">
+                <div class="ev-card">
+                  <div class="ev-card-title">Active Events</div>
+                  <div class="ev-card-stat">22</div>
+                </div>
+                <div class="ev-card">
+                  <div class="ev-card-title">Attendees</div>
+                  <div class="ev-card-stat">847</div>
+                </div>
+                <div class="ev-card">
+                  <div class="ev-card-title">Revenue</div>
+                  <div class="ev-card-stat">&#8358;2.4M</div>
+                </div>
+                <div class="ev-card">
+                  <div class="ev-card-title">Upcoming</div>
+                  <div class="ev-card-stat">5</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="project-info">
+        <div class="project-number">01 &mdash; Featured</div>
+        <h3 class="project-title">Event Management Platform</h3>
+        <p class="project-desc">
+          A full-featured platform for creating, managing, and attending events. Includes creator dashboards with analytics, attendee management, filtering by active/past events with paginated views, and a responsive React frontend.
+        </p>
+        <div class="project-tags">
+          <span class="tag">React</span>
+          <span class="tag">TypeScript</span>
+          <span class="tag">Node.js</span>
+          <span class="tag">MongoDB</span>
+          <span class="tag">Express</span>
+        </div>
+        <a href="https://eventify.codejs.live" target="_blank" class="project-link">View Project &rarr;</a>
+      </div>
+    </div>
+
+    <!-- Project 2 -->
+    <div class="project-card reveal">
+      <div class="project-preview">
+        <div class="project-preview-inner">
+          <div class="preview-app preview-game">
+            <div class="preview-topbar">
+              <div class="mini-dot"></div><div class="mini-dot"></div><div class="mini-dot"></div>
+              <div class="url-bar">guessing-game.codejs.live</div>
+            </div>
+            <div class="preview-content">
+              <div class="game-prompt">Guess the answer!</div>
+              <div class="game-input-row">
+                <div class="game-box">4</div>
+                <div class="game-box">2</div>
+                <div class="game-box">_</div>
+              </div>
+              <div class="game-hint">hint: too low...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="project-info">
+        <div class="project-number">02</div>
+        <h3 class="project-title">Guessing Game</h3>
+        <p class="project-desc">
+          Real-time multiplayer guessing game powered by Socket.io. My first deployed project &mdash; where I learned the full deployment pipeline from scratch.
+        </p>
+        <div class="project-tags">
+          <span class="tag">Node.js</span>
+          <span class="tag">Socket.io</span>
+          <span class="tag">Express</span>
+        </div>
+        <a href="https://guessing-game.codejs.live" target= "_blank" class="project-link">View Live &rarr;</a>
+      </div>
+    </div>
+
+    <!-- Project 3 -->
+    <div class="project-card reveal">
+      <div class="project-preview">
+        <div class="project-preview-inner">
+          <div class="preview-app preview-expense">
+            <div class="preview-topbar">
+              <div class="mini-dot"></div><div class="mini-dot"></div><div class="mini-dot"></div>
+              <div class="url-bar">expense-tracker.codejs.live</div>
+            </div>
+            <div class="preview-content">
+              <div class="exp-row">
+                <span class="exp-cat">Food &amp; Dining</span>
+                <span class="exp-amt">&#8358;45,200</span>
+              </div>
+              <div class="exp-bar"><div class="exp-bar-fill" style="width:75%"></div></div>
+              <div class="exp-row">
+                <span class="exp-cat">Transport</span>
+                <span class="exp-amt">&#8358;22,800</span>
+              </div>
+              <div class="exp-bar"><div class="exp-bar-fill" style="width:45%"></div></div>
+              <div class="exp-row">
+                <span class="exp-cat">Utilities</span>
+                <span class="exp-amt">&#8358;18,500</span>
+              </div>
+              <div class="exp-bar"><div class="exp-bar-fill" style="width:35%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="project-info">
+        <div class="project-number">03</div>
+        <h3 class="project-title">Expense Tracker</h3>
+        <p class="project-desc">
+          Personal finance tracker with category breakdowns, spending trends, and a clean dashboard. Deployed on my VPS with subdomain routing.
+        </p>
+        <div class="project-tags">
+          <span class="tag">React</span>
+          <span class="tag">Node.js</span>
+          <span class="tag">MongoDB</span>
+          <span class="tag">Tailwind</span>
+        </div>
+        <a href="https://expense-tracker.codejs.live" target= "_blank" class="project-link">View Live &rarr;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<div class="divider"></div>
+<section id="contact" class="contact-section">
+  <div class="section-eyebrow reveal" style="justify-content: center;">Get in Touch</div>
+  <h2 class="contact-heading reveal">Let's build<br>something <em>great.</em></h2>
+  <p class="contact-sub reveal">
+    I'm open to freelance projects, collaborations, and interesting conversations. 
+    If you have a project in mind, let's talk.
+  </p>
+  <div class="contact-links reveal">
+    <a href="mailto:hajayibasith1@gmail.com" class="contact-link">
+      <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4L12 13 2 4"/></svg>
+      Email
+    </a>
+    <a href="https://github.com/hajayb" class="contact-link" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+      GitHub
+    </a>
+    <a href="https://ajayi-basit.codejs.live" class="contact-link" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+      ajayi-basit.codejs.live
+    </a>
+  </div>
+
+  <!-- Contact Form -->
+  <div class="contact-form-wrapper reveal">
+    <div class="contact-form-label">Or drop a message <span>directly</span></div>
+    <div class="contact-form" id="contactForm">
+      <div id="formFields">
+        <div class="form-field">
+          <input type="email" id="senderEmail" placeholder="Your email" required autocomplete="email">
+        </div>
+        <div class="form-field">
+          <textarea id="senderMessage" placeholder="What's on your mind?" required></textarea>
+        </div>
+        <div class="form-submit">
+          <span class="form-hint">Powered by Resend</span>
+          <button type="button" class="form-send-btn" id="sendBtn" onclick="handleSubmit()">
+            Send
+            <svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
+          </button>
+        </div>
+      </div>
+      <!-- Success State -->
+      <div class="form-status success" id="successState">
+        <span class="status-icon">&#10003;</span>
+        <div class="status-text">Message sent!</div>
+        <div class="status-sub">I'll get back to you soon.</div>
+      </div>
+      <!-- Error State -->
+      <div class="form-status error" id="errorState">
+        <span class="status-icon">&#10007;</span>
+        <div class="status-text">Something went wrong</div>
+        <div class="status-sub">Try again or email me directly.</div>
+        <button class="status-retry" onclick="resetForm()">Try Again</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>&copy; 2026 Ajayi Basit. Deployed on my own VPS.</p>
+  <div class="footer-status">
+    <div class="pulse-live"></div>
+    <p>All systems operational</p>
+  </div>
+</footer>
+
+<script>
+// ─── Intersection Observer for reveals ───
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal, .reveal-stagger').forEach(el => observer.observe(el));
+
+// ─── Smooth scroll for nav links ───
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+// ─── Nav scroll effect ───
+let lastScroll = 0;
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  const curr = window.scrollY;
+  if (curr > 80) {
+    navbar.classList.add('scrolled');
+  } else {
+    navbar.classList.remove('scrolled');
+  }
+  lastScroll = curr;
+}, { passive: true });
+
+// ─── Mobile nav toggle ───
+function toggleNav() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+function closeNav() {
+  document.getElementById('navLinks').classList.remove('open');
+}
+
+// ─── Parallax on hero visual (desktop only) ───
+if (window.innerWidth > 1024) {
+  document.addEventListener('mousemove', (e) => {
+    const visual = document.querySelector('.hero-visual');
+    if (!visual) return;
+    const x = (e.clientX / window.innerWidth - 0.5) * 12;
+    const y = (e.clientY / window.innerHeight - 0.5) * 12;
+    visual.style.transform = `translate(${x}px, ${y}px)`;
+  });
+}
+
+const CONTACT_API = '/contact';
+
+async function handleSubmit() {
+  const email = document.getElementById('senderEmail').value.trim();
+  const message = document.getElementById('senderMessage').value.trim();
+  const btn = document.getElementById('sendBtn');
+
+  if (!email || !message) return;
+
+  // Basic email check
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    document.getElementById('senderEmail').focus();
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = 'Sending&hellip;';
+
+  try {
+    const res = await fetch(CONTACT_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, message }),
+    });
+
+    if (!res.ok) throw new Error('Failed');
+
+    document.getElementById('formFields').style.display = 'none';
+    document.getElementById('successState').classList.add('show');
+  } catch (err) {
+    document.getElementById('formFields').style.display = 'none';
+    document.getElementById('errorState').classList.add('show');
+  }
+}
+
+function resetForm() {
+  document.getElementById('formFields').style.display = 'block';
+  document.getElementById('errorState').classList.remove('show');
+  document.getElementById('successState').classList.remove('show');
+  const btn = document.getElementById('sendBtn');
+  btn.disabled = false;
+  btn.innerHTML = 'Send <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2.5"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>';
+}
+</script>
+</body>
+</html>
